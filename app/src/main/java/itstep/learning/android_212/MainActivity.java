@@ -1,5 +1,6 @@
 package itstep.learning.android_212;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -23,14 +24,13 @@ public class MainActivity extends AppCompatActivity {
         //     return insets;
         // });
 
-        findViewById( R.id.button1 ).setOnClickListener( this::onButton1Click );
+        findViewById( R.id.home_btn_calc ).setOnClickListener( this::onButtonCalc );
     }
 
-    private void onButton1Click( View view ) {
-        TextView tv = findViewById( R.id.tv_hello );
-        String text = tv.getText().toString();
-        text += "!";
-        tv.setText( text );
+    private void onButtonCalc( View view ) {
+        Intent activityIntent = new Intent(
+                MainActivity.this, CalcActivity.class );
+        startActivity( activityIntent );
     }
 }
 /*
