@@ -29,5 +29,7 @@
     <string name="calc_btn_7">7</string>
     <string name="calc_btn_8">8</string>
     <string name="calc_btn_9">9</string>
+    <string name="calc_div_zero">Ділення на 0</string>
+    <string name="calc_negative_sqrt">Не визначено</string>
 
 </resources>
