@@ -2,8 +2,9 @@
     <string name="app_name">Android-212</string>
     <string name="home_title">Знайомство з Android</string>
     <string name="home_btn_calc">Калькулятор</string>
+    <string name="home_btn_game">Жести. Гра.</string>
 
-    <!-- Калькулятор -->
+    <!-- region Калькулятор -->
     <string name="calc_tv_title">Калькулятор</string>
     <string name="calc_btn_percent">%</string>
     <string name="calc_btn_ce">CE</string>
@@ -31,5 +32,11 @@
     <string name="calc_btn_9">9</string>
     <string name="calc_div_zero">Ділення на 0</string>
     <string name="calc_negative_sqrt">Не визначено</string>
+    <!-- endregion -->
+
+    <!-- region Game -->
+    <string name="game_tv_title">2048</string>
+    <string name="game_tv_info">Join the numbers and get to the 2048 tile!</string>
+    <!-- endregion -->
 
 </resources>

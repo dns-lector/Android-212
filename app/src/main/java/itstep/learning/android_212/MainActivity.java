@@ -25,11 +25,18 @@ public class MainActivity extends AppCompatActivity {
         // });
 
         findViewById( R.id.home_btn_calc ).setOnClickListener( this::onButtonCalc );
+        findViewById( R.id.home_btn_game ).setOnClickListener( this::onButtonGame );
     }
 
     private void onButtonCalc( View view ) {
         Intent activityIntent = new Intent(
                 MainActivity.this, CalcActivity.class );
+        startActivity( activityIntent );
+    }
+
+    private void onButtonGame( View view ) {
+        Intent activityIntent = new Intent(
+                MainActivity.this, GameActivity.class );
         startActivity( activityIntent );
     }
 }
