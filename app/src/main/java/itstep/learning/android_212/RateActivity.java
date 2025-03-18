@@ -1,11 +1,16 @@
 package itstep.learning.android_212;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -24,9 +29,10 @@ import java.util.List;
 import itstep.learning.android_212.orm.NbuRate;
 
 public class RateActivity extends AppCompatActivity {
-    private final String nbuUrl = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
-    private TextView tvDemo;
+    private final static String nbuUrl = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
+    private LinearLayout ratesContainer;
     private List<NbuRate> nbuRates;
+    private Drawable rateBg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +44,9 @@ public class RateActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        tvDemo = findViewById( R.id.rate_tv_demo );
+        rateBg = AppCompatResources.getDrawable(
+                getApplicationContext(), R.drawable.rate_bg );
+        ratesContainer = findViewById( R.id.rate_container );
         new Thread( this::loadRates ).start();
     }
 
@@ -50,7 +58,7 @@ public class RateActivity extends AppCompatActivity {
             for (int i = 0; i < arr.length(); i++) {
                 nbuRates.add( NbuRate.fromJsonObject( arr.getJSONObject( i ) ) ) ;
             }
-            runOnUiThread( () -> tvDemo.setText( content ) );
+            runOnUiThread( this::showRates );
         }
         catch (MalformedURLException ex) {
             Log.e("RateActivity::loadRates", "MalformedURLException: " + ex.getMessage());
@@ -61,6 +69,64 @@ public class RateActivity extends AppCompatActivity {
         catch( JSONException ex ) {
             Log.e("RateActivity::loadRates", "JSONException: " + ex.getMessage());
         }
+    }
+
+    private void showRates() {
+        for( NbuRate nbuRate : nbuRates ) {
+            ratesContainer.addView( rateView( nbuRate ) );
+        }
+    }
+
+    private View rateView( NbuRate nbuRate ) {
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        layoutParams.setMargins( 10, 5, 10, 5 );
+
+        LinearLayout layout = new LinearLayout( RateActivity.this );
+        layout.setOrientation( LinearLayout.HORIZONTAL );
+        layout.setBackground( rateBg );
+        layout.setLayoutParams( layoutParams );
+
+        TextView tv = new TextView( RateActivity.this );
+        tv.setText( nbuRate.getCc() );
+        tv.setLayoutParams( layoutParams );
+        layout.addView( tv );
+
+        tv = new TextView( RateActivity.this );
+        tv.setLayoutParams( layoutParams );
+        tv.setText( getString( R.string.rate_rate_tpl, nbuRate.getRate() ) );
+        layout.addView( tv );
+
+        layout.setTag( nbuRate );
+        layout.setOnClickListener( this::onRateClick );
+        return layout;
+    }
+
+    private void onRateClick( View view ) {
+        if( view.getTag() instanceof NbuRate ) {
+            NbuRate nbuRate = (NbuRate) view.getTag();
+            new AlertDialog.Builder(RateActivity.this)
+                    .setTitle( nbuRate.getTxt() )
+                    .setMessage( getString(
+                            R.string.rate_alert_tpl,
+                            NbuRate.dateFormat.format( nbuRate.getExchangeDate() ),
+                            nbuRate.getRate() ) )
+                    .show();
+        }
+        /*
+        Курси валют:
+        Реалізувати повідомлення при натисненні "чіпси" за зразком:
+            Австралійський долар
+            Скорочена назва: AUD
+            Код R030: 36
+            Курс на 12.03: 1 AUD = ₴ 27.1342
+        Вивести дату на яку показано курс у складі загального інтерфейсу,
+          поза областю прокрутки (завжди видима)
+        Додати поле вибору дати, реалізувати зображення курсів на
+          вибрану користувачем дату (https://bank.gov.ua/ua/open-data/api-dev)
+         */
     }
 
     private String readStreamToString( InputStream inputStream ) throws IOException {
